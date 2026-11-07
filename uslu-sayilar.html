@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<title>Üslü Sayılar Sınavı</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg1:#f6effa;--bg2:#fdeff0;--ink:#7b6cd9;--ink2:#a99bf0;--text:#3b3550;--card:rgba(255,255,255,.78);--track:#e9e2f4;--ok:#3fa57f;--bad:#e0687d;--mute:#8d86a0;--shadow:0 10px 30px rgba(123,108,217,.14);--chip:#efe9fb}
+:root[data-theme="dark"]{--bg1:#1d1930;--bg2:#2a2038;--ink:#b7a8ff;--ink2:#8c7bea;--text:#efeaff;--card:rgba(255,255,255,.07);--track:#35304d;--ok:#6fdcae;--bad:#ff94a6;--mute:#a49dba;--shadow:0 10px 30px rgba(0,0,0,.3);--chip:#322b4d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#1d1930;--bg2:#2a2038;--ink:#b7a8ff;--ink2:#8c7bea;--text:#efeaff;--card:rgba(255,255,255,.07);--track:#35304d;--ok:#6fdcae;--bad:#ff94a6;--mute:#a49dba;--shadow:0 10px 30px rgba(0,0,0,.3);--chip:#322b4d}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed;color:var(--text);font-family:"Quicksand","Nunito","Trebuchet MS",system-ui,sans-serif;font-weight:500}
+main{max-width:460px;margin:0 auto;padding:24px 18px 48px}
+h1{font-size:1.8rem;font-weight:700;margin:10px 0 6px;color:var(--ink)}
+p{line-height:1.55;margin:6px 0 16px;color:var(--mute)}
+.card{background:var(--card);border-radius:26px;padding:22px;margin:16px 0;box-shadow:var(--shadow);backdrop-filter:blur(8px)}
+label{display:flex;gap:10px;align-items:center;margin:12px 0;font-size:1.05rem}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--ink)}
+button{font:inherit;font-weight:700;background:linear-gradient(135deg,var(--ink2),var(--ink));color:#fff;border:0;border-radius:999px;padding:15px 20px;width:100%;font-size:1.1rem;cursor:pointer;box-shadow:0 8px 20px rgba(123,108,217,.28);transition:transform .15s}
+button:active{transform:scale(.97)}
+button.alt{background:var(--card);color:var(--ink);box-shadow:var(--shadow);margin-top:12px}
+#talk{margin-top:14px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ink2);outline-offset:3px}
+.top{display:flex;justify-content:space-between;color:var(--mute);font-size:.95rem;font-weight:600}
+.bar{height:14px;background:var(--track);border-radius:999px;overflow:hidden;margin:12px 0}
+.bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--ink2),var(--ink));border-radius:999px;transform-origin:left}
+.bar.low i{background:linear-gradient(90deg,#f4a3b3,var(--bad))}
+.q{font-size:4.4rem;font-weight:700;text-align:center;margin:18px 0 8px;color:var(--ink);background:var(--card);border-radius:30px;padding:26px 10px;box-shadow:var(--shadow)}
+.q sup{font-size:.55em}
+#ans{width:100%;font:inherit;font-weight:700;font-size:2rem;text-align:center;padding:12px;border:2px solid transparent;border-radius:22px;background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+#ans:focus{border-color:var(--ink2);outline:none}
+#msg{min-height:1.6em;text-align:center;font-weight:700;margin:14px 0 6px}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.mic{text-align:center;color:var(--mute);font-size:.95rem;min-height:1.4em}
+ul{padding-left:20px;line-height:1.8}
+select{font:inherit;font-weight:600;padding:8px 12px;border:0;border-radius:999px;background:var(--chip);color:var(--text)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{margin:0;background:var(--chip);border-radius:999px;padding:8px 16px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .15s}
+.chip input{display:none}
+.chip:has(input:checked){background:linear-gradient(135deg,var(--ink2),var(--ink));color:#fff}
+.sub{color:var(--mute);margin:16px 0 0;font-size:.95rem}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<section id="start">
+  <h1>Üslü Sayılar Sınavı</h1>
+  <p>Her soru için 15 saniyen var. Program soruyu sesli okur (örneğin 9 üssü 0). Sen Sesli cevap düğmesine basıp cevabı söylersin (örneğin bir). Yazarak da cevaplayabilirsin.</p>
+  <div class="card">
+    <input type="checkbox" id="optMic" checked class="hide">
+    <label><input type="checkbox" id="optRead" checked> Soruyu sesli oku</label>
+    <label>Her soru için <select id="optTime"><option>10</option><option selected>15</option><option>20</option><option>30</option><option>45</option></select> saniye</label>
+    <label>Soru sayısı <select id="optCount"><option value="0">Hepsi</option><option value="10">10</option><option value="20">20</option></select></label>
+    <p class="sub">Konular (dokunarak aç/kapat)</p>
+    <div class="chips" id="chips">
+      <label class="chip"><input type="checkbox" value="5" checked>5</label>
+      <label class="chip"><input type="checkbox" value="6" checked>6</label>
+      <label class="chip"><input type="checkbox" value="7" checked>7</label>
+      <label class="chip"><input type="checkbox" value="8" checked>8</label>
+      <label class="chip"><input type="checkbox" value="9" checked>9</label>
+      <label class="chip"><input type="checkbox" value="10" checked>10</label>
+      <label class="chip"><input type="checkbox" value="s1" checked>11²-20²</label>
+      <label class="chip"><input type="checkbox" value="s2" checked>30²-100²</label>
+    </div>
+  </div>
+  <button id="go">Başla</button>
+  <button class="alt" id="mix">🔀 Karışık (hepsi, rastgele)</button>
+  <p class="mic" id="micInfo"></p>
+</section>
+
+<section id="game" class="hide">
+  <div class="top"><span id="count"></span><span id="score"></span></div>
+  <div class="bar" id="bar"><i id="fill"></i></div>
+  <div class="q" id="q"></div>
+  <input id="ans" inputmode="numeric" autocomplete="off" aria-label="Cevap">
+  <div id="msg" aria-live="polite"></div>
+  <div class="mic" id="mic"></div>
+  <button id="talk">🎤 Sesli cevap</button>
+  <button class="alt" id="send">Cevapla</button>
+  <button class="alt" id="skip">Geç</button>
+</section>
+
+<section id="end" class="hide">
+  <h1 id="final"></h1>
+  <div class="card"><strong>Tekrar çalışılacaklar</strong><ul id="wrong"></ul></div>
+  <button id="again">Yeniden başla</button>
+</section>
+</main>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var TIME=15, qs=[], idx=0, score=0, wrongs=[], left=TIME, timer=null, locked=false, rec=null, recOn=false;
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR){$('micInfo').textContent='Bu tarayıcı sesli cevabı desteklemiyor, cevapları yazarak ver.';$('optMic').checked=false;$('optMic').disabled=true;}
+
+function build(g){
+  var l=[],i,b;
+  var m={5:4,6:3,7:3,8:3,9:3,10:5};
+  for(b in m)if(g.indexOf(b)>-1)for(i=0;i<=m[b];i++)l.push([+b,i]);
+  if(g.indexOf('s1')>-1)for(b=11;b<=20;b++)l.push([b,2]);
+  if(g.indexOf('s2')>-1)for(b=30;b<=100;b+=10)l.push([b,2]);
+  for(i=l.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=l[i];l[i]=l[j];l[j]=t;}
+  return l;
+}
+
+/* Türkçe sayı okuma: "iki yüz yirmi beş" -> 225 */
+var U={sıfır:0,bir:1,iki:2,üç:3,dört:4,beş:5,altı:6,yedi:7,sekiz:8,dokuz:9};
+var T={on:10,yirmi:20,otuz:30,kırk:40,elli:50,altmış:60,yetmiş:70,seksen:80,doksan:90};
+function parse(s){
+  s=s.toLocaleLowerCase('tr').replace(/(\d)[.\s](?=\d{3}(\D|$))/g,'$1');
+  var d=s.match(/\d+/);if(d)return +d[0];
+  var w=s.split(/[^a-zçğıöşü]+/),tot=0,cur=0,hit=false;
+  w.forEach(function(x){
+    if(x in U){cur+=U[x];hit=true}
+    else if(x in T){cur+=T[x];hit=true}
+    else if(x==='yüz'){cur=(cur||1)*100;hit=true}
+    else if(x==='bin'){tot+=(cur||1)*1000;cur=0;hit=true}
+  });
+  return hit?tot+cur:null;
+}
+
+function speak(t){
+  if(!$('optRead').checked||!window.speechSynthesis)return;
+  try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';speechSynthesis.speak(u);}catch(e){}
+}
+function say(b,e){
+  var n=['sıfırıncı','birinci','ikinci','üçüncü','dördüncü','beşinci'];
+  return b+(e===2?' üssü iki':' üssü '+['sıfır','bir','iki','üç','dört','beş'][e]);
+}
+
+function listen(){
+  if(!SR||locked||recOn)return;
+  try{
+    rec=new SR();rec.lang='tr-TR';rec.interimResults=true;rec.maxAlternatives=3;rec.continuous=false;
+    rec.onstart=function(){recOn=true;$('mic').textContent='Dinliyorum... cevabı söyle'};
+    rec.onresult=function(ev){
+      var r=ev.results[ev.results.length-1],ok=false,heard=null,k;
+      for(k=0;k<r.length;k++){var v=parse(r[k].transcript);if(heard===null&&v!==null)heard=v;if(v===qs[idx].a){ok=true;break;}}
+      if(ok){$('ans').value=qs[idx].a;finish(true);}
+      else if(r.isFinal&&heard!==null){$('ans').value=heard;finish(false);}
+    };
+    rec.onerror=function(e){recOn=false;if(e.error==='not-allowed'||e.error==='service-not-allowed'){$('optMic').checked=false;$('mic').textContent='Mikrofon izni yok, cevabı yazarak ver.';}};
+    rec.onend=function(){recOn=false;if(!locked&&$('mic').textContent.indexOf('Dinliyorum')===0)$('mic').textContent='Duyamadım, Sesli cevap düğmesine tekrar bas';};
+    rec.start();
+  }catch(e){recOn=false;}
+}
+function stopListen(){try{if(rec){rec.onend=null;rec.abort();}}catch(e){}recOn=false;}
+
+function show(id){['start','game','end'].forEach(function(x){$(x).classList.toggle('hide',x!==id)});}
+
+function next(){
+  stopListen();
+  if(idx>=qs.length)return end();
+  locked=false;var q=qs[idx];
+  $('q').innerHTML=q.b+'<sup>'+q.e+'</sup>';
+  $('count').textContent='Soru '+(idx+1)+' / '+qs.length;
+  $('score').textContent='Puan: '+score;
+  $('ans').value='';$('msg').textContent='';$('msg').className='';$('mic').textContent='';
+  left=TIME;tick();
+  clearInterval(timer);
+  var t0=Date.now();
+  timer=setInterval(function(){
+    left=TIME-(Date.now()-t0)/1000;
+    if(left<=0){left=0;tick();finish(false,true);} else tick();
+  },100);
+  $('ans').focus({preventScroll:true});
+  speak(say(q.b,q.e)+' kaçtır?');
+  
+}
+function tick(){
+  $('fill').style.transform='scaleX('+(left/TIME)+')';
+  $('bar').classList.toggle('low',left<5);
+  $('bar').setAttribute('aria-label',Math.ceil(left)+' saniye');
+}
+function finish(ok,timeout){
+  if(locked)return;locked=true;clearInterval(timer);stopListen();
+  try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(e){}
+  var q=qs[idx];
+  if(ok){score++;$('msg').className='ok';$('msg').textContent='Doğru! '+q.b+'^'+q.e+' = '+q.a;speak('Doğru');}
+  else{wrongs.push(q);$('msg').className='bad';$('msg').textContent=(timeout?'Süre doldu. ':'Yanlış. ')+'Gerçek cevap: '+q.a;speak((timeout?'Süre doldu. ':'Yanlış. ')+'Gerçek cevap '+q.a+' idi');}
+  $('score').textContent='Puan: '+score;
+  idx++;
+  setTimeout(next,ok?1200:2600);
+}
+function submit(){
+  if(locked)return;
+  var v=parse($('ans').value);
+  if(v===null){$('msg').className='bad';$('msg').textContent='Bir sayı yaz';return;}
+  if(v===qs[idx].a)finish(true);
+  else finish(false);
+}
+function end(){
+  clearInterval(timer);show('end');
+  $('final').textContent=score+' / '+qs.length+' doğru';
+  var ul=$('wrong');ul.innerHTML='';
+  if(!wrongs.length){var li=document.createElement('li');li.textContent='Hepsini bildin!';ul.appendChild(li);}
+  wrongs.forEach(function(q){var li=document.createElement('li');li.textContent=q.b+'^'+q.e+' = '+q.a;ul.appendChild(li);});
+  speak('Bitti. '+qs.length+' sorudan '+score+' tanesini doğru bildin.');
+}
+function start(){
+  var g=[].slice.call(document.querySelectorAll('#chips input:checked')).map(function(c){return c.value});
+  if(!g.length){$('micInfo').textContent='En az bir konu seç.';return;}
+  TIME=+$('optTime').value;var n=+$('optCount').value;
+  qs=build(g).map(function(x){return {b:x[0],e:x[1],a:Math.pow(x[0],x[1])}});
+  if(n&&qs.length>n)qs=qs.slice(0,n);
+  idx=0;score=0;wrongs=[];show('game');
+  if(SR&&$('optMic').checked){try{var p=navigator.mediaDevices&&navigator.mediaDevices.getUserMedia?0:0;}catch(e){}}
+  next();
+}
+$('go').onclick=start;
+$('mix').onclick=function(){[].forEach.call(document.querySelectorAll('#chips input'),function(c){c.checked=true});$('optCount').value='0';start();};$('again').onclick=function(){show('start')};
+$('send').onclick=submit;
+$('talk').onclick=function(){try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(e){}stopListen();setTimeout(listen,150);};
+if(!SR)$('talk').classList.add('hide');$('skip').onclick=function(){finish(false)};
+$('ans').addEventListener('keydown',function(e){if(e.key==='Enter')submit();});
+})();
+</script>
+</body>
+</html>
